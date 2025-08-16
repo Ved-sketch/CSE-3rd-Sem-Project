@@ -1,1 +1,1 @@
-19
+label.grid(row=0, column=0, sticky="ew", pady=40)

@@ -1,36 +1,29 @@
 import time
-import customtkinter
+import customtkinter as ctk
+
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+ctk.set_window_scaling(1.0)
+ctk.set_widget_scaling(2.5)
 
 class GUI:
     def __init__(self):
-        self.root = customtkinter.CTk()
-        customtkinter.set_appearance_mode("System")
-        customtkinter.set_default_color_theme("blue")
+        self.root = ctk.CTk()
+        self.root.title("Finsight")
 
         # centring the app
         self.centring_the_app()
 
+
         # Main Frame
-        main_frame = customtkinter.CTkFrame(self.root)
-        main_frame.pack(fill="both", expand=True)
-
-        # Canvas and Scrollbar (customtkinter)
-        self.canvas = customtkinter.CTkCanvas(main_frame, bg="black", highlightthickness=0)
-        scrollbar = customtkinter.CTkScrollbar(main_frame, orientation="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=scrollbar.set)
-
-        scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", fill="both", expand=True)
-
-        # Inner frame inside the canvas (customtkinter)
-        self.inner_frame = customtkinter.CTkFrame(self.canvas, fg_color="black")
-        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
-
-        # Update scrollregion when widgets are added
-        self.inner_frame.bind(
-            "<Configure>",
-            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self.main_frame = ctk.CTkScrollableFrame(
+            self.root,
+            orientation="vertical",
+            width = 800,
+            height = 300,
+            corner_radius=15
         )
+        self.main_frame.pack(pady=5,padx=5)
 
         self.greeting()
         
@@ -38,15 +31,16 @@ class GUI:
 
     def greeting(self):
         current_time = time.strftime("%H:%M")
-        if(current_time > "6" and current_time < "12"):
+        if current_time > "6" and current_time < "12":
             message = "Good Morning!"
-        elif(current_time > '12' and current_time < '19'):
+        elif current_time > '12' and current_time < '19':
             message = "Good Afternoon"
         else:
             message = "Working Late?"
-
-        label = customtkinter.CTkLabel(self.inner_frame, text = message, font=("Times New Roman",16))
-        label.pack(pady=20)
+        
+        label = ctk.CTkLabel(self.main_frame, text=message, font=("Times New Roman", 22))
+        label.pack(pady=40)
+        
 
     def centring_the_app(self):
 
