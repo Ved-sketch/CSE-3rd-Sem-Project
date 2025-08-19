@@ -1,36 +1,15 @@
 import time
-import requests
-import webbrowser
 import customtkinter as ctk
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
-ctk.set_window_scaling(1.0)
-ctk.set_widget_scaling(2.5)
 
-class NewsItem(ctk.CTkFrame):
-    def __init__(self, parent, headline, summary, url, source):
-        super().__init__(parent, corner_radius=12, fg_color=("white", "gray20"))
-        # Headline
-        self.headline_label = ctk.CTkLabel(self, text=headline, font=("Arial", 18, "bold"), wraplength=700, anchor="w")
-        self.headline_label.pack(anchor="w", padx=16, pady=(10, 2))
-        # Summary
-        self.summary_label = ctk.CTkLabel(self, text=summary, font=("Arial", 13), wraplength=700, anchor="w")
-        self.summary_label.pack(anchor="w", padx=16, pady=(0, 6))
-        # URL (clickable)
-        self.url_label = ctk.CTkLabel(self, text="Read more", text_color="blue", cursor="hand2", font=("Arial", 12, "underline"))
-        self.url_label.pack(anchor="w", padx=16, pady=(0, 8))
-        self.url_label.bind("<Button-1>", lambda e: webbrowser.open(url))
-        # Source (bottom right)
-        self.source_label = ctk.CTkLabel(self, text=f"Source: {source}", font=("Arial", 10, "italic"), text_color="gray")
-        self.source_label.pack(anchor="e", padx=16, pady=(0, 8))
 
 class GUI:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title("Finsight")
 
-        # centring the app
         self.centring_the_app()
 
         # Main scrollable frame with thin scrollbar
@@ -53,38 +32,19 @@ class GUI:
         self.bind_hover_events()
 
         self.greeting()
-
-        self.display_news()
-
+        self.create_news_items()
         self.root.mainloop()
-    
-    def display_news(self):
-        try:
-            response = requests.get("http://127.0.0.1:5000/news")
-            if response.status_code == 200:
-                news_list = response.json()
-                for news in news_list:
-                    headline = news.get("headline", "No Headline")
-                    summary = news.get("summary", "No Summary")
-                    url = news.get("url", "#")
-                    source = news.get("source", "Unknown")
-                    item = NewsItem(self.main_frame, headline, summary, url, source)
-                    item.pack(fill="x", pady=8, padx=10)
-            else:
-                error_label = ctk.CTkLabel(self.main_frame, text="Failed to fetch news.", font=("Arial", 14))
-                error_label.pack(pady=20)
-        except Exception as e:
-            error_label = ctk.CTkLabel(self.main_frame, text=f"Error: {e}", font=("Arial", 14))
-            error_label.pack(pady=20)
 
     def hide_scrollbar(self):
+        """Hide the scrollbar"""
         self.main_frame._scrollbar.pack_forget()
 
     def show_scrollbar(self):
+        """Show the scrollbar"""
         self.main_frame._scrollbar.pack(side="right", fill="y")
 
     def bind_hover_events(self):
-
+        """Bind mouse enter/leave events"""
         # Show scrollbar when hovering over the frame
         self.main_frame.bind("<Enter>", self.on_frame_enter)
         self.main_frame.bind("<Leave>", self.on_frame_leave)
@@ -94,18 +54,20 @@ class GUI:
         self.main_frame._scrollbar.bind("<Leave>", self.on_scrollbar_leave)
 
     def on_frame_enter(self, event):
+        """Show scrollbar when mouse enters frame"""
         self.show_scrollbar()
 
     def on_frame_leave(self, event):
-
+        """Hide scrollbar when mouse leaves frame"""
         # Add small delay to prevent flickering
         self.root.after(100, self.check_and_hide_scrollbar)
 
     def on_scrollbar_enter(self, event):
+        """Keep scrollbar visible when hovering over it"""
         pass  # Scrollbar stays visible
 
     def on_scrollbar_leave(self, event):
-
+        """Hide scrollbar when leaving scrollbar area"""
         self.root.after(100, self.check_and_hide_scrollbar)
 
     def check_and_hide_scrollbar(self):
@@ -122,7 +84,6 @@ class GUI:
         except:
             self.hide_scrollbar()
 
-
     def greeting(self):
         current_time = time.strftime("%H:%M")
         if current_time > "06:00" and current_time < "12:00":
@@ -131,17 +92,58 @@ class GUI:
             message = "Good Afternoon"
         else:
             message = "Working Late?"
-        
+
         label = ctk.CTkLabel(self.main_frame, text=message, font=("Times New Roman", 22))
         label.pack(pady=30)
-        
+
+    def create_news_items(self):
+        # Sample news items
+        news_items = [
+
+            "Market Rally Continues",
+            "Tech Giants Report Earnings",
+            "Economic Indicators Strong",
+            "Cryptocurrency Update",
+            "Banking Sector News",
+            "Federal Reserve Updates",
+            "Global Trade Analysis",
+            "Investment Opportunities",
+            "Risk Assessment Report",
+            "Economic Forecast 2024",
+            "Stock Market Volatility",
+            "Bond Market Trends",
+            "Commodity Price Changes",
+            "Currency Exchange Rates",
+            "Real Estate Market Update",
+            "Energy Sector Analysis",
+            "Healthcare Investment News",
+            "Technology Stocks Surge",
+            "Emerging Markets Report",
+            "Financial Regulation Updates",
+            "Pension Fund Performance",
+            "Insurance Industry News",
+            "Startup Funding Rounds",
+            "Merger & Acquisition Activity",
+            "Corporate Earnings Preview"
+        ]
+
+        for item in news_items:
+            news_button = ctk.CTkButton(
+                self.main_frame,
+                text=item,
+                height=40,
+                font=("Arial", 14),
+                command=lambda x=item: self.show_news(x)
+            )
+            news_button.pack(pady=5, padx=20, fill="x")
+
+    def show_news(self, news_title):
+        print(f"Clicked: {news_title}")  # Replace with your news detail logic
 
     def centring_the_app(self):
+        width = 900
+        height = 700
 
-        width = 800
-        height = 600
-
-        # get screen dimensions
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
 
@@ -149,5 +151,6 @@ class GUI:
         y = (screen_height - height) // 2
 
         self.root.geometry(f"{width}x{height}+{x}+{y}")
+
 
 GUI()
