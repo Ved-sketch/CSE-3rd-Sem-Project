@@ -2,6 +2,9 @@ import time
 import requests
 import webbrowser
 import customtkinter as ctk
+import subprocess
+import sys
+import os
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -150,4 +153,17 @@ class GUI:
 
         self.root.geometry(f"{width}x{height}+{x}+{y}")
 
-GUI()
+if __name__ == "__main__":
+    # Start the Flask server as a subprocess
+    server_process = subprocess.Popen(
+        [sys.executable, os.path.join(os.path.dirname(__file__), "app.py")],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    try:
+        GUI()
+    finally:
+        # Terminate the server when GUI closes
+        server_process.terminate()
+
+# GUI()
